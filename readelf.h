@@ -1,6 +1,7 @@
 #pragma once
 
 #include <elf.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -93,12 +94,25 @@ struct elf *readelf(int fd) {
     struct stat st;
     struct elf *e;
     Elf64_Shdr *sym_hdr;
+    size_t file_size, total;
+    ssize_t nread;
 
     e = malloc(sizeof(*e));
 
     fstat(fd, &st);
-    e->file = malloc(st.st_size);
-    read(fd, e->file, st.st_size);
+    file_size = st.st_size;
+    e->file = malloc(file_size);
+
+    total = 0;
+    while (total < file_size) {
+        nread = read(fd, e->file + total, file_size - total);
+        if (nread <= 0) {
+            free(e->file);
+            free(e);
+            return NULL;
+        }
+        total += nread;
+    }
 
     e->ehdr = *(Elf64_Ehdr *) e->file;
 

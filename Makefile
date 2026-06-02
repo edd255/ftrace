@@ -8,7 +8,7 @@ DEPS := functools.h readelf.h ptrace_helpers.h logging.h
 
 .PHONY: clean
 
-ftrace: ftrace.c functools.h readelf.h ptrace_helpers.h logging.h
+ftrace: ftrace.c $(DEPS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o ftrace ftrace.c $(LDLIBS)
 
 test: test.c

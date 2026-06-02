@@ -238,7 +238,7 @@ int main(int argc, char **argv) {
                 ret_fmt = "<< %s = %d\n";
                 break;
             case 'o':
-                trace_fd = open(optarg, O_WRONLY | O_CREAT | O_TRUNC);
+                trace_fd = open(optarg, O_WRONLY | O_CREAT | O_TRUNC, 0666);
                 if (trace_fd == -1) error("Couldn't open output file %s", optarg);
                 break;
             case 'h':
