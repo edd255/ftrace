@@ -31,7 +31,7 @@ format_t* add_format(format_t* fmt, void* addr, int sym_i, char* str) {
     if (str == NULL) {
         new_fmt->str[0] = 0;
     } else {
-        strncpy(new_fmt->str, str, sizeof(new_fmt->str) - 1);
+        snprintf(new_fmt->str, sizeof(new_fmt->str), "%s", str);
     }
     new_fmt->fancy = false;
     new_fmt->next = fmt;
@@ -53,7 +53,7 @@ format_t* get_format(format_t* fmt, void* addr) {
 bool update_format(format_t* fmt, void* addr, char* str) {
     while (fmt != NULL) {
         if (fmt->addr == addr) {
-            strncpy(fmt->str, str, sizeof(fmt->str) - 1);
+            snprintf(fmt->str, sizeof(fmt->str), "%s", str);
             return true;
         }
         fmt = fmt->next;

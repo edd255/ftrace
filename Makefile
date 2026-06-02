@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS ?= -O2 -fstack-protector-strong -fPIE -fstack-clash-protection -fcf-protection=full
+CFLAGS ?= -O2 -fstack-protector-strong -fPIE -fstack-clash-protection -fcf-protection=full -Wall -Wpedantic -Werror
 CPPFLAGS ?= -D_FORTIFY_SOURCE=3
 LDFLAGS ?= -pie -Wl,-z,relro,-z,now -Wl,-z,noexecstack -s
 LDLIBS ?= -lcapstone

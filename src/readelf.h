@@ -111,13 +111,13 @@ struct elf* readelf(int fd) {
 
     e->shdrs = (Elf64_Shdr*)&e->file[e->ehdr.e_shoff];
     e->n_shdrs = e->ehdr.e_shnum;
-    e->shdr_names = &e->file[e->shdrs[e->ehdr.e_shstrndx].sh_offset];
+    e->shdr_names = (char*)&e->file[e->shdrs[e->ehdr.e_shstrndx].sh_offset];
 
     Elf64_Shdr* sym_hdr = get_shdr(e, ".symtab");
 
     e->syms = (Elf64_Sym*)&e->file[sym_hdr->sh_offset];
     e->n_syms = sym_hdr->sh_size / sym_hdr->sh_entsize;
-    e->sym_names = &e->file[e->shdrs[sym_hdr->sh_link].sh_offset];
+    e->sym_names = (char*)&e->file[e->shdrs[sym_hdr->sh_link].sh_offset];
 
     return e;
 }

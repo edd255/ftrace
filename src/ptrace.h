@@ -3,6 +3,7 @@
 #include <sys/ptrace.h>
 
 int read_data(pid_t pid, void* addr, uint8_t* buf, int len) {
+    uint8_t* addr_bytes = addr;
     union {
         uint64_t val;
         char bytes[sizeof(uint64_t)];
@@ -14,7 +15,7 @@ int read_data(pid_t pid, void* addr, uint8_t* buf, int len) {
         }
 
         errno = 0;
-        u.val = ptrace(PTRACE_PEEKDATA, pid, addr, NULL);
+        u.val = ptrace(PTRACE_PEEKDATA, pid, addr_bytes, NULL);
         if (u.val == -1 && errno != 0) {
             return -1;
         }
@@ -22,11 +23,11 @@ int read_data(pid_t pid, void* addr, uint8_t* buf, int len) {
 
         len -= sizeof(uint64_t);
         buf += sizeof(uint64_t);
-        addr += sizeof(uint64_t);
+        addr_bytes += sizeof(uint64_t);
     }
 
     errno = 0;
-    u.val = ptrace(PTRACE_PEEKTEXT, pid, addr, NULL);
+    u.val = ptrace(PTRACE_PEEKTEXT, pid, addr_bytes, NULL);
     if (u.val == -1 && errno != 0) {
         return -1;
     }
@@ -36,6 +37,7 @@ int read_data(pid_t pid, void* addr, uint8_t* buf, int len) {
 }
 
 int write_data(pid_t child, void* addr, uint8_t* data, int len) {
+    uint8_t* addr_bytes = addr;
     union {
         uint64_t val;
         char bytes[sizeof(uint64_t)];
@@ -46,23 +48,23 @@ int write_data(pid_t child, void* addr, uint8_t* data, int len) {
             break;
         }
 
-        if (ptrace(PTRACE_POKETEXT, child, addr, data) == -1) {
+        if (ptrace(PTRACE_POKETEXT, child, addr_bytes, data) == -1) {
             return -1;
         }
 
         len -= sizeof(uint64_t);
         data += sizeof(uint64_t);
-        addr += sizeof(uint64_t);
+        addr_bytes += sizeof(uint64_t);
     }
 
     errno = 0;
-    u.val = ptrace(PTRACE_PEEKTEXT, child, addr, NULL);
+    u.val = ptrace(PTRACE_PEEKTEXT, child, addr_bytes, NULL);
     if (u.val == -1 && errno != 0) {
         return -1;
     }
     // printf("before: %lx\n", u.val);
     memcpy(u.bytes, data, len % sizeof(uint64_t));
-    if (ptrace(PTRACE_POKETEXT, child, addr, u.val) == -1) {
+    if (ptrace(PTRACE_POKETEXT, child, addr_bytes, u.val) == -1) {
         return -1;
     }
     // u.val = ptrace(PTRACE_PEEKTEXT, child, addr, NULL);
