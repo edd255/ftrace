@@ -4,7 +4,7 @@ CPPFLAGS ?= -D_FORTIFY_SOURCE=3
 LDFLAGS ?= -pie -Wl,-z,relro,-z,now -Wl,-z,noexecstack -s
 LDLIBS ?= -lcapstone
 
-DEPS := functools.h readelf.h ptrace_helpers.h logging.h
+DEPS := functools.h readelf.h ptrace.h logging.h
 
 .PHONY: clean
 

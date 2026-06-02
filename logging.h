@@ -17,24 +17,25 @@ bool colored = false;
 
 // pass through to printf that can be disabled by the verbose flag [white]
 void trace_print(char* color, char* msg, ...) {
-    va_list args;
-
-    if (!verbose)
+    if (!verbose) {
         return;
+    }
 
+    va_list args;
     va_start(args, msg);
 
-    if (colored)
+    if (colored) {
         dprintf(trace_fd, "%s", color);
+    }
     vdprintf(trace_fd, msg, args);
-    if (colored)
+    if (colored) {
         dprintf(trace_fd, "%s", RESET);
+    }
 }
 
 // logs an error to the console and quits - only for extreme errors [red]
 void error(char* msg, ...) {
     va_list args;
-
     va_start(args, msg);
 
     printf("%s[!] Error: ", RED);
@@ -45,11 +46,11 @@ void error(char* msg, ...) {
 
 // logs an info [green]
 void info(char* msg, ...) {
-    va_list args;
-
-    if (!verbose)
+    if (!verbose) {
         return;
+    }
 
+    va_list args;
     va_start(args, msg);
 
     printf("%s[+] ", GREEN);
@@ -59,11 +60,11 @@ void info(char* msg, ...) {
 
 // logs a warning [yellow]
 void warn(char* msg, ...) {
-    va_list args;
-
-    if (!verbose)
+    if (!verbose) {
         return;
+    }
 
+    va_list args;
     va_start(args, msg);
 
     printf("%s[-] ", YELLOW);

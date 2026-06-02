@@ -38,45 +38,39 @@ size_t get_sym_size(struct elf* e, int i) {
 }
 
 int get_sym_index(struct elf* e, char* name) {
-    int i;
-
-    for (i = 0; i < e->n_syms; i++) {
-        if (!strcmp(name, get_sym_name(e, i)))
+    for (int i = 0; i < e->n_syms; i++) {
+        if (!strcmp(name, get_sym_name(e, i))) {
             return i;
+        }
     }
 
     return -1;
 }
 
 int at_symbol(struct elf* e, void* addr) {
-    int i;
-
-    for (i = 0; i < e->n_syms; i++) {
-        if (get_sym_addr(e, i) == addr)
+    for (int i = 0; i < e->n_syms; i++) {
+        if (get_sym_addr(e, i) == addr) {
             return i;
+        }
     }
 
     return -1;
 }
 
 Elf64_Shdr* get_shdr(struct elf* e, char* name) {
-    int i;
-
-    for (i = 0; i < e->n_shdrs; i++) {
-        if (!strcmp(name, get_shdr_name(e, i)))
+    for (int i = 0; i < e->n_shdrs; i++) {
+        if (!strcmp(name, get_shdr_name(e, i))) {
             return &e->shdrs[i];
+        }
     }
 
     return NULL;
 }
 
 bool addr_in_section(struct elf* e, void* addr, char* name) {
-    Elf64_Shdr* shdr;
-    uint64_t sec_start, sec_end;
-
-    shdr = get_shdr(e, name);
-    sec_start = shdr->sh_addr;
-    sec_end = sec_start + shdr->sh_size;
+    Elf64_Shdr* shdr = get_shdr(e, name);
+    uint64_t sec_start = shdr->sh_addr;
+    uint64_t sec_end = sec_start + shdr->sh_size;
 
     return (uint64_t)addr >= sec_start && (uint64_t)addr < sec_end;
 }
@@ -86,29 +80,22 @@ bool sym_in_section(struct elf* e, int i, char* name) {
 }
 
 uint8_t* bytes_from_addr_in_section(struct elf* e, void* addr, char* name) {
-    Elf64_Shdr* shdr;
-
-    shdr = get_shdr(e, name);
+    Elf64_Shdr* shdr = get_shdr(e, name);
 
     return &e->file[(uint64_t)addr - (uint64_t)shdr->sh_addr + shdr->sh_offset];
 }
 
 struct elf* readelf(int fd) {
     struct stat st;
-    struct elf* e;
-    Elf64_Shdr* sym_hdr;
-    size_t file_size, total;
-    ssize_t nread;
-
-    e = malloc(sizeof(*e));
+    struct elf* e = malloc(sizeof(*e));
 
     fstat(fd, &st);
-    file_size = st.st_size;
+    size_t file_size = st.st_size;
     e->file = malloc(file_size);
 
-    total = 0;
+    size_t total = 0;
     while (total < file_size) {
-        nread = read(fd, e->file + total, file_size - total);
+        ssize_t nread = read(fd, e->file + total, file_size - total);
         if (nread <= 0) {
             free(e->file);
             free(e);
@@ -126,7 +113,7 @@ struct elf* readelf(int fd) {
     e->n_shdrs = e->ehdr.e_shnum;
     e->shdr_names = &e->file[e->shdrs[e->ehdr.e_shstrndx].sh_offset];
 
-    sym_hdr = get_shdr(e, ".symtab");
+    Elf64_Shdr* sym_hdr = get_shdr(e, ".symtab");
 
     e->syms = (Elf64_Sym*)&e->file[sym_hdr->sh_offset];
     e->n_syms = sym_hdr->sh_size / sym_hdr->sh_entsize;

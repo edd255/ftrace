@@ -2,32 +2,29 @@
 #include <stdlib.h>
 
 int fib(int n) {
-    if (n == 0)
+    if (n == 0) {
         return 1;
-    if (n == 1)
+    }
+    if (n == 1) {
         return 1;
-    else
+    } else {
         return fib(n - 1) + fib(n - 2);
+    }
 }
 
 int get_n(char* str) {
-    char buf[10];
-
     if (str == NULL) {
+        char buf[10];
         printf(">> ");
         fgets(buf, sizeof(buf), stdin);
         return atoi(buf);
-    } else
+    } else {
         return atoi(str);
+    }
 }
 
 int main(int argc, char** argv) {
-    int n;
-
-    if (argc == 2)
-        n = get_n(argv[1]);
-    else
-        n = get_n(NULL);
+    int n = argc == 2 ? get_n(argv[1]) : get_n(NULL);
 
     printf("%d\n", fib(n));
 
