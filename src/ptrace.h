@@ -6,7 +6,7 @@ int read_data(pid_t pid, void* addr, uint8_t* buf, int len) {
     uint8_t* addr_bytes = addr;
     union {
         uint64_t val;
-        char bytes[sizeof(uint64_t)];
+        uint8_t bytes[sizeof(uint64_t)];
     } u;  // union idea taken from http://www.linuxjournal.com/article/6210
 
     while (len) {
@@ -40,7 +40,7 @@ int write_data(pid_t child, void* addr, uint8_t* data, int len) {
     uint8_t* addr_bytes = addr;
     union {
         uint64_t val;
-        char bytes[sizeof(uint64_t)];
+        uint8_t bytes[sizeof(uint64_t)];
     } u;  // union idea taken from http://www.linuxjournal.com/article/6210
 
     while (len) {
