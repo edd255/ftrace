@@ -16,7 +16,9 @@ int get_n(char* str) {
     if (str == NULL) {
         char buf[10];
         printf(">> ");
-        fgets(buf, sizeof(buf), stdin);
+        if (fgets(buf, sizeof(buf), stdin) == NULL) {
+            return 0;
+        }
         return atoi(buf);
     } else {
         return atoi(str);
