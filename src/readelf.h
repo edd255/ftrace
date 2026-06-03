@@ -114,6 +114,11 @@ struct elf* readelf(int fd) {
     e->shdr_names = (char*)&e->file[e->shdrs[e->ehdr.e_shstrndx].sh_offset];
 
     Elf64_Shdr* sym_hdr = get_shdr(e, ".symtab");
+    if (sym_hdr == NULL) {
+        free(e->file);
+        free(e);
+        return NULL;
+    }
 
     e->syms = (Elf64_Sym*)&e->file[sym_hdr->sh_offset];
     e->n_syms = sym_hdr->sh_size / sym_hdr->sh_entsize;

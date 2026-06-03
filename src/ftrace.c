@@ -151,13 +151,19 @@ void trace(pid_t pid) {
 
     struct elf* e = readelf(fd);
     if (e == NULL) {
+        kill(child, SIGKILL);
+        waitpid(child, NULL, 0);
         error("failed to read elf file for symbols");
     }
 
     int status;
     wait(&status);
 
-    register_functions(e);
+    if (register_functions(e) == -1) {
+        kill(child, SIGKILL);
+        waitpid(child, NULL, 0);
+        error("failed to register function breakpoints");
+    }
     ptrace(PTRACE_CONT, child, NULL, NULL);
 
     int depth = 0;

@@ -3,6 +3,8 @@ CFLAGS ?= -O2 -fstack-protector-strong -fPIE -fstack-clash-protection -fcf-prote
 CPPFLAGS ?= -D_FORTIFY_SOURCE=3
 LDFLAGS ?= -pie -Wl,-z,relro,-z,now -Wl,-z,noexecstack -s
 LDLIBS ?= -lcapstone
+TRACEE_CFLAGS ?= -O0 -fno-pie
+TRACEE_LDFLAGS ?= -no-pie
 
 SRC_DIR := src
 TEST_DIR := tests
@@ -30,10 +32,10 @@ $(BUILD_DIR)/ftrace.o: $(FTRACE_SRC) $(DEPS) | $(BUILD_DIR)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 
 $(BIN_DIR)/test: $(TEST_OBJ) | $(BIN_DIR)
-	$(CC) $(LDFLAGS) -o $@ $<
+	$(CC) $(TRACEE_LDFLAGS) -o $@ $<
 
 $(BUILD_DIR)/test.o: $(TEST_SRC) | $(BUILD_DIR)
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
+	$(CC) $(TRACEE_CFLAGS) -c -o $@ $<
 
 $(BUILD_DIR) $(BIN_DIR):
 	mkdir -p $@
